@@ -3,43 +3,45 @@ import requests
 from PIL import Image
 import imagehash
 import time
+import sys
 
-PATH = "images/"
-Set=set()
+PATH = "images"
+Set = set()
 Counter = 0
 
-def initializeSet():
-    s=set()
+
+def initialize_set():
+    s = set()
     try:
         with open('hashes.txt') as f:
             lines = f.readlines()
         for line in lines:
             s.add(line)
-    except :
+    except:
         print("It seems it is your first execution, no problem :)")
     finally:
-        print("Set inicialized to avoid repetitions from previous executions")
+        print("Set initialized to avoid repetitions from previous executions")
     return s
 
 
 def save_image(picture):
-    file = PATH + "aux.jpg"
+    file = os.path.join(PATH, "auxiliary.jpg")
 
-    with open(file, "wb") as f: # wrtie byte
+    with open(file, "wb") as f:  # write byte
         f.write(picture)
     img = Image.open(file)
-    Hashfile = str(imagehash.average_hash(img))
-    if Hashfile not in Set:
-        Set.add(Hashfile)
-        img.save( PATH + str(Hashfile) + ".jpg")
+    hashfile = str(imagehash.average_hash(img))
+    if hashfile not in Set:
+        Set.add(hashfile)
+        img.save(os.path.join(PATH, str(hashfile) + ".jpg"))
 
-        with open('hashes.txt',"a") as f2: # to append
-            f2.write(str(Hashfile) + "\n")
+        with open('hashes.txt', "a") as f2:  # to append
+            f2.write(str(hashfile) + "\n")
         f2.close()
 
         global Counter
         Counter += 1
-        print("Succesfully Saved" + " -- Image #: " + str(Counter) )
+        print("Successfully Saved" + " -- Image #: " + str(Counter))
 
     else:
         print("Already Existed")
@@ -49,7 +51,11 @@ def save_image(picture):
 
 
 def get_image_from_web():
-    r = requests.get("https://thispersondoesnotexist.com/image").content
+    if eyeImages:
+        url = "https://thispersondoesnotexist.com/image"
+    else:
+        url = "https://picsum.photos/200/300"
+    r = requests.get(url).content
     return r
 
 
@@ -57,27 +63,38 @@ def create_dir():
     try:
         os.mkdir(PATH)
     except OSError:
-        print ("Creation of the directory %s failed" % PATH)
+        print("Creation of the directory %s failed" % PATH)
     else:
-        print ("Successfully created the directory %s " % PATH)
+        print("Successfully created the directory %s " % PATH)
 
-def objectiveReached(NumImages):
+
+def objective_reached(num_images):
     global Counter
-    return Counter >= NumImages
+    return Counter >= num_images
+
 
 def main():
     create_dir()
     global Set
-    Set = initializeSet()
+    Set = initialize_set()
 
-    NumDifImages = 300
-    while not objectiveReached(NumDifImages):
+    if eyeImages:
+        num_dif_images = 300
+    else:
+        num_dif_images = 400
+    while not objective_reached(num_dif_images):
         img = get_image_from_web()
         save_image(img)
-        time.sleep(0.5) # la pagina parece que funciona por tiempo, asi asegura mas imgs diferentes
+        time.sleep(0.5)  # la pagina parece que funciona por tiempo, asi asegura mas imgs diferentes
     return
 
 
-
 if __name__ == "__main__":
-   main()
+    eyeImages = True
+    if len(sys.argv) > 1:
+        secondArg = sys.argv[1]
+        if secondArg == "false" or secondArg == "False" or secondArg == "noEyes":
+            eyeImages = False
+        elif secondArg != "true" and secondArg != "True" and secondArg != "eyes":
+            print('Argument ', secondArg, ' not recognised; assuming eye images wanted')
+    main()
