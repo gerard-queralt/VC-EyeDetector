@@ -73,15 +73,16 @@ def objective_reached(num_images):
     return Counter >= num_images
 
 
-def main():
+def main(num_dif_images = 0):
     create_dir()
     global Set
     Set = initialize_set()
 
-    if eyeImages:
-        num_dif_images = 300
-    else:
-        num_dif_images = 400
+    if num_dif_images == 0:
+        if eyeImages:
+            num_dif_images = 300
+        else:
+            num_dif_images = 400
     while not objective_reached(num_dif_images):
         img = get_image_from_web()
         save_image(img)
@@ -97,4 +98,7 @@ if __name__ == "__main__":
             eyeImages = False
         elif secondArg != "true" and secondArg != "True" and secondArg != "eyes":
             print('Argument ', secondArg, ' not recognised; assuming eye images wanted')
-    main()
+    if len(sys.argv) > 2:
+        main(int(sys.argv[2]))
+    else:
+        main()

@@ -1,3 +1,4 @@
+PopulateDatabase;
 eyes = GetAllImagesInDatabaseFolder('Eyes');
 noEyes = GetAllImagesInDatabaseFolder('NoEyes');
 eyesChars = ExtractCharacteristicsFromImages(eyes);
