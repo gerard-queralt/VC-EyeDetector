@@ -4,6 +4,7 @@ function [characteristics] = ExtractCharacteristics(grayImage)
         grayImage = rgb2gray(grayImage);
     end
     I = imresize(grayImage, [48, 32]);
-    characteristics = [0, 1];
+    meanGray = mean2(I);
+    characteristics = [meanGray];
 end
 
