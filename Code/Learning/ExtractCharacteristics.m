@@ -12,13 +12,24 @@ function [characteristics] = ExtractCharacteristics(grayImage)
     Sx = imfilter(I, h');
     Ider = abs(Sy) + abs(Sx);
     meanGradient = mean2(Ider);
-    % number of brightest
+    % number of bright
     % eyes should have a lot of white pixels
 %     hist = imhist(I);
 %     brightest = find(hist, 1, 'last');
 %     nBrightest = hist(brightest);
-    brightest = I > 200;
-    nBrightest = sum(sum(brightest));
-    characteristics = table(meanGray, meanGradient, nBrightest);
+    bright = I > 200;
+    nBrigh = sum(sum(bright));
+    
+    % working with largest connected component
+    BI = not(imbinarize(I));
+    filteredBiggest = bwareafilt(BI,1);
+
+    prop = regionprops('table', filteredBiggest, I, 'WeightedCentroid');
+    centroidX = prop.WeightedCentroid(1);
+    centroidY = prop.WeightedCentroid(2);
+    BIchars = table(centroidX, centroidY);
+
+    characteristics = table(meanGray, meanGradient, nBrigh);
+    characteristics = [characteristics, BIchars];
 end
 
