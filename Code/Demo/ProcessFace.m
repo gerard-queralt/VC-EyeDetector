@@ -5,6 +5,6 @@ function [res] = ProcessFace(face)
     h = round((h - step)/2);
     w = round((w - step)/2);
     blk = [h, w];
-    res = blkproc(grayFace, [step, step], blk, @ExtractCharacteristics);
+    res = blkproc(grayFace, [step, step], blk, @ExtractCharacteristicsAsVector);
 end
 

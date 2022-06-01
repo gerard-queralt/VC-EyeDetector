@@ -11,7 +11,9 @@ function [] = Demo(videoName)
         faces = ExtractFaces(videoFrame, bboxes);
         
         facesChars = cellfun(@ProcessFace, faces, 'UniformOutput', false);
-        eyesFound = cellfun(@(chars) FindEyes(chars, MODEL?), faces, 'UniformOutput', false);
+        if exists('trainedModel', 'var') == 1
+            eyesFound = cellfun(@(chars) FindEyes(chars, trainedModel), facesChars, 'UniformOutput', false);
+        end
     end
 end
 
