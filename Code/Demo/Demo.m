@@ -1,19 +1,37 @@
-function [] = Demo(videoName)
+function [] = Demo(videoName, trainedModel)
     % Create a cascade detector object.
     FaceDetector = vision.CascadeObjectDetector('FrontalFaceLBP');
     % Read a video frame and run the face detector.
     videoReader = VideoReader(videoName);
+    videoNameSplit = split(videoName, '.');
+    resultName = strcat(videoNameSplit(1), 'Result');
+    resultName = resultName{1};
+    videosPath = what('Videos').path;
+    oldDir = cd(videosPath);
+    result = VideoWriter(resultName);
+    open(result);
     while hasFrame(videoReader)
         % get the next frame
         videoFrame = readFrame(videoReader);
+        [r, c, ~] = size(videoFrame);
         bboxes = step(FaceDetector, videoFrame);
         
         faces = ExtractFaces(videoFrame, bboxes);
         
-        facesChars = cellfun(@ProcessFace, faces, 'UniformOutput', false);
-        if exists('trainedModel', 'var') == 1
-            eyesFound = cellfun(@(chars) FindEyes(chars, trainedModel), facesChars, 'UniformOutput', false);
+        eyesFound = cellfun(@(face) FindEyes(face, trainedModel), faces, 'UniformOutput', false);
+
+        for i = 1:numel(faces)
+            [rf, cf, ~] = size(faces{i});
+            eyes = imresize(eyesFound{i}, [rf, cf]);
+            bb = bboxes(i,:);
+            eyeMask = zeros(r, c);
+            eyeMask(bb(2):bb(2)+bb(4), bb(1):bb(1)+bb(3)) = eyes;
+            props = regionprops('table', eyeMask, 'BoundingBox');
+            videoFrame = insertShape(videoFrame, 'Rectangle', props.BoundingBox);
         end
+        writeVideo(result, videoFrame);
     end
+    close(result);
+    cd(oldDir);
 end
 
