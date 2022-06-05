@@ -1,8 +1,12 @@
 PopulateDatabase;
-eyes = GetAllImagesInDatabaseFolder('Eyes');
-noEyes = GetAllImagesInDatabaseFolder('NoEyes');
-eyesChars = ExtractCharacteristicsFromImages(eyes);
-noEyesChars = ExtractCharacteristicsFromImages(noEyes);
+if exist('eyesImages', 'var') == 0
+    eyesImages = GetAllImagesInDatabaseFolder('Eyes');
+end
+if exist('noEyesImages', 'var') == 0
+    noEyesImages = GetAllImagesInDatabaseFolder('NoEyes');
+end
+eyesChars = ExtractCharacteristicsFromImages(eyesImages);
+noEyesChars = ExtractCharacteristicsFromImages(noEyesImages);
 chars = [eyesChars; noEyesChars];
 lables = table('Size', [700, 1],'VariableTypes',"string",'VariableNames',"Expected");
 lables(1:300,1) = {'Eye'};
