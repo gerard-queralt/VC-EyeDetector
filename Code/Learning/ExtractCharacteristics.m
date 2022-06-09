@@ -12,14 +12,9 @@ function [characteristics] = ExtractCharacteristics(grayImage)
     meanGradient = mean2(Ider);
     % graylevel histogram
     hist = imhist(I)';
-    % sum of columns
-    sumCol = sum(I,1);
     % sum of rows
     sumRow = sum(I,2)';
-    % gray-level co-occurrence matrix
-    glcms = graycomatrix(I);
-    glcmsVec = reshape(glcms, 1, []);
 
-    characteristics = table(meanGradient, hist, sumCol, sumRow, glcmsVec);
+    characteristics = table(meanGradient, hist, sumRow);
 end
 
