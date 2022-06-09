@@ -1,4 +1,3 @@
-
 prediction = trainedModel.predictFcn(chars);
 % from: https://es.mathworks.com/matlabcentral/answers/388575-convert-string-array-into-cell-array#answer_310224
 expected = arrayfun(@(x)char(chars.Expected(x)),1:numel(chars.Expected),'uni',false)';
