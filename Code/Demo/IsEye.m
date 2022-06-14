@@ -3,4 +3,3 @@ function [eye] = IsEye(image, trainedModel)
     prediction = trainedModel.predictFcn(chars);
     eye = strcmp(prediction{1},'Eye');
 end
-

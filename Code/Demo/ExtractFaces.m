@@ -7,4 +7,3 @@ function [faces] = ExtractFaces(videoFrame,bboxes)
         faces{i} = I;
     end
 end
-

@@ -24,9 +24,10 @@ function [] = Demo(videoName, trainedModel)
             [rf, cf, ~] = size(faces{i});
             eyes = imresize(eyesFound{i}, [rf, cf]);
             bb = bboxes(i,:);
-            eyeMask = zeros(r, c);
+            eyeMask = false(r, c);
             eyeMask(bb(2):bb(2)+bb(4), bb(1):bb(1)+bb(3)) = eyes;
-            props = regionprops('table', eyeMask, 'BoundingBox');
+            largestRegion = bwareafilt(eyeMask,1);
+            props = regionprops('table', largestRegion, 'BoundingBox');
             videoFrame = insertShape(videoFrame, 'Rectangle', props.BoundingBox);
         end
         writeVideo(result, videoFrame);
@@ -34,4 +35,3 @@ function [] = Demo(videoName, trainedModel)
     close(result);
     cd(oldDir);
 end
-

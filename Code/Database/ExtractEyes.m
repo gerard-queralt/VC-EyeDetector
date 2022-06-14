@@ -1,3 +1,4 @@
+% rectangle found empirically
 rect = [283.112, 446.532, 185.909, 82.459];
 fullPath = what('Eyes').path;
 eyes = dir(append(fullPath,'\*.jpg'));
