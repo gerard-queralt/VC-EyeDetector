@@ -4,17 +4,15 @@ function [characteristics] = ExtractCharacteristics(grayImage)
         grayImage = rgb2gray(grayImage);
     end
     I = imresize(grayImage, [48, 32]);
-    % mean gradient
-    h = fspecial("sobel");
-    Sy = imfilter(I, h);
-    Sx = imfilter(I, h');
-    Ider = abs(Sy) + abs(Sx);
-    meanGradient = mean2(Ider);
+
     % graylevel histogram
     hist = imhist(I)';
     % sum of rows
     sumRow = sum(I,2)';
+    % sum of rows of gradient magnitude and direction
+    [Gmag, Gdir] = imgradient(I,'sobel');
+    sumRowGmag = sum(Gmag, 2)';
+    sumRowGdir = sum(Gdir, 2)';
 
-    characteristics = table(meanGradient, hist, sumRow);
+    characteristics = table(hist, sumRow, sumRowGmag, sumRowGdir);
 end
-
