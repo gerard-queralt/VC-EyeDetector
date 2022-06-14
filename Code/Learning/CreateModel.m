@@ -5,6 +5,7 @@ end
 if exist('noEyesImages', 'var') == 0
     noEyesImages = GetAllImagesInDatabaseFolder('NoEyes');
 end
+
 eyesChars = ExtractCharacteristicsFromImages(eyesImages);
 noEyesChars = ExtractCharacteristicsFromImages(noEyesImages);
 chars = [eyesChars; noEyesChars];
@@ -12,4 +13,10 @@ lables = table('Size', [700, 1],'VariableTypes',"string",'VariableNames',"Expect
 lables(1:300,1) = {'Eye'};
 lables(301:end,1) = {'NoEye'};
 chars = [chars, lables];
+
+databasePath = what('VC-EyeDetector\Database').path;
+oldDir = cd(databasePath);
+writematrix(table2array(chars), 'DescriptorTable.csv');
+cd(oldDir);
+
 classificationLearner(chars, "Expected")
